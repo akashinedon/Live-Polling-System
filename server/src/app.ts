@@ -9,9 +9,22 @@ dotenv.config();
 const app = express();
 
 // ─── Middleware ──────────────────────────────────────────
+const allowedOrigins = [
+    process.env.CLIENT_URL || 'http://localhost:5173',
+    'http://localhost:5173',
+    'https://live-polling-system-lac-alpha.vercel.app',
+].filter(Boolean);
+
 app.use(
     cors({
-        origin: process.env.CLIENT_URL || 'http://localhost:5173',
+        origin: (origin, callback) => {
+            // Allow requests with no origin (mobile apps, curl, etc)
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         credentials: true,
         methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     })

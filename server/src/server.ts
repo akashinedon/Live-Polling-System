@@ -13,11 +13,18 @@ const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/live-polling';
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
+// Allowed origins for CORS (both REST and WebSocket)
+const allowedOrigins = [
+    CLIENT_URL,
+    'http://localhost:5173',
+    'https://live-polling-system-lac-alpha.vercel.app',
+].filter(Boolean);
+
 // ─── HTTP + Socket.io Server ─────────────────────────────
 const httpServer = createServer(app);
 const io = new SocketServer(httpServer, {
     cors: {
-        origin: CLIENT_URL,
+        origin: allowedOrigins,
         methods: ['GET', 'POST'],
         credentials: true,
     },

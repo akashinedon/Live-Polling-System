@@ -1,0 +1,19 @@
+databases: []
+
+services:
+  - type: web
+    name: live-polling-server
+    runtime: node
+    region: oregon
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: CLIENT_URL
+        value: https://live-polling-system-lac-alpha.vercel.app
+      - key: MONGODB_URI
+        sync: false  # You'll set this manually in Render dashboard
