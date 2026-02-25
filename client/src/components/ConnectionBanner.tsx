@@ -13,8 +13,8 @@ export const ConnectionBanner: React.FC<ConnectionBannerProps> = ({ status }) =>
                 position: 'fixed',
                 top: 0, left: 0, right: 0,
                 padding: '0.5rem 1rem',
-                background: status === 'connecting' ? 'rgba(245,158,11,0.15)' : 'rgba(239,68,68,0.15)',
-                borderBottom: `1px solid ${status === 'connecting' ? 'rgba(245,158,11,0.3)' : 'rgba(239,68,68,0.3)'}`,
+                background: status === 'connecting' ? 'rgba(245,158,11,0.08)' : 'rgba(239,68,68,0.08)',
+                borderBottom: `1px solid ${status === 'connecting' ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.2)'}`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -22,7 +22,6 @@ export const ConnectionBanner: React.FC<ConnectionBannerProps> = ({ status }) =>
                 fontSize: '0.85rem',
                 color: status === 'connecting' ? 'var(--color-warning)' : 'var(--color-error)',
                 zIndex: 9000,
-                backdropFilter: 'blur(10px)',
             }}
         >
             <div className={`status-dot ${status}`} />

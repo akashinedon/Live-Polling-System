@@ -8,50 +8,53 @@ interface VoteBarProps {
     animate?: boolean;
 }
 
-const barColors = [
-    'linear-gradient(90deg, #6366f1, #a855f7)',
-    'linear-gradient(90deg, #06b6d4, #6366f1)',
-    'linear-gradient(90deg, #10b981, #06b6d4)',
-    'linear-gradient(90deg, #f59e0b, #ef4444)',
-    'linear-gradient(90deg, #a855f7, #ec4899)',
-    'linear-gradient(90deg, #ef4444, #f59e0b)',
-];
-
 export const VoteBar: React.FC<VoteBarProps> = ({ result, isSelected, rank = 0, animate = true }) => {
     return (
         <div
             style={{
-                padding: '0.875rem 1rem',
-                borderRadius: 'var(--radius-md)',
-                background: isSelected
-                    ? 'rgba(99, 102, 241, 0.12)'
-                    : 'var(--color-surface-2)',
-                border: `1px solid ${isSelected ? 'rgba(99,102,241,0.4)' : 'var(--color-border)'}`,
-                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
                 animation: animate ? 'fadeIn 0.4s ease' : undefined,
             }}
         >
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '0.875rem', fontWeight: 500, color: 'var(--color-text)' }}>
-                    {isSelected && <span style={{ marginRight: '0.4rem' }}>✓</span>}
-                    {result.text}
-                </span>
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{result.votes} votes</span>
-                    <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--color-primary-light)', minWidth: '3ch', textAlign: 'right' }}>
-                        {result.percentage}%
-                    </span>
+            {/* Number badge */}
+            <span className="option-number">{rank + 1}</span>
+
+            {/* Bar container */}
+            <div style={{ flex: 1, position: 'relative' }}>
+                <div className="progress-track" style={{
+                    border: isSelected ? '2px solid var(--color-primary)' : 'none',
+                }}>
+                    <div
+                        className="progress-fill"
+                        style={{
+                            width: `${Math.max(result.percentage, 2)}%`,
+                            background: 'var(--color-primary)',
+                        }}
+                    >
+                        <span style={{
+                            color: 'white',
+                            fontSize: '0.85rem',
+                            fontWeight: 600,
+                            whiteSpace: 'nowrap',
+                        }}>
+                            {result.text}
+                        </span>
+                    </div>
                 </div>
             </div>
-            <div className="progress-track">
-                <div
-                    className="progress-fill"
-                    style={{
-                        width: `${result.percentage}%`,
-                        background: barColors[rank % barColors.length],
-                    }}
-                />
-            </div>
+
+            {/* Percentage */}
+            <span style={{
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                color: 'var(--color-text)',
+                minWidth: '3.5ch',
+                textAlign: 'right',
+            }}>
+                {result.percentage}%
+            </span>
         </div>
     );
 };
@@ -66,19 +69,6 @@ export const ResultsPanel: React.FC<{
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Live Results</span>
-                <span
-                    style={{
-                        fontSize: '0.8rem', color: 'var(--color-primary-light)',
-                        background: 'rgba(99,102,241,0.12)',
-                        padding: '0.2rem 0.6rem',
-                        borderRadius: 'var(--radius-full)',
-                    }}
-                >
-                    {totalVotes} {totalVotes === 1 ? 'response' : 'responses'}
-                </span>
-            </div>
             {sorted.map((r, i) => (
                 <VoteBar
                     key={r.optionId}
@@ -88,6 +78,9 @@ export const ResultsPanel: React.FC<{
                     animate={animate}
                 />
             ))}
+            <div style={{ textAlign: 'right', fontSize: '0.8rem', color: 'var(--color-text-muted)', marginTop: '0.25rem' }}>
+                {totalVotes} {totalVotes === 1 ? 'response' : 'responses'}
+            </div>
         </div>
     );
 };

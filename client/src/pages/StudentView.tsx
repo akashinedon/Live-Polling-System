@@ -78,36 +78,8 @@ export const StudentView: React.FC = () => {
             <ConnectionBanner status={connectionStatus} />
             <ToastContainer toasts={toasts} removeToast={removeToast} />
 
-            <div style={{ minHeight: '100vh', padding: '2rem 1rem', paddingTop: '3rem' }}>
-                <div className="container" style={{ maxWidth: 640 }}>
-                    {/* Header */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <div style={{
-                                width: 40, height: 40, borderRadius: '50%',
-                                background: 'var(--gradient-primary)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '1.1rem', fontWeight: 700, color: 'white',
-                            }}>
-                                {studentName[0]?.toUpperCase()}
-                            </div>
-                            <div>
-                                <div style={{ fontWeight: 600, fontSize: '0.95rem' }}>{studentName}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                    <div className={`status-dot ${connectionStatus}`} />
-                                    {connectionStatus}
-                                </div>
-                            </div>
-                        </div>
-                        <button
-                            className="btn btn-ghost btn-sm"
-                            id="student-logout-btn"
-                            onClick={() => { setRole(null); setStudentName(''); }}
-                        >
-                            Leave
-                        </button>
-                    </div>
-
+            <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem' }}>
+                <div style={{ width: '100%', maxWidth: 700 }}>
                     {/* Main content area */}
                     {state.isLoading ? (
                         <StudentSkeleton />
@@ -115,11 +87,21 @@ export const StudentView: React.FC = () => {
                         <WaitingForPoll />
                     ) : !state.poll.isActive || isExpired ? (
                         /* Results view */
-                        <div className="card animate-scaleIn" style={{ padding: '2rem' }}>
-                            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🎉</div>
-                                <h3 style={{ marginBottom: '0.25rem' }}>Poll Results</h3>
-                                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>{state.poll.question}</p>
+                        <div className="animate-scaleIn" style={{ textAlign: 'center' }}>
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <span className="intervue-badge">Intervue Poll</span>
+                            </div>
+                            <h2 style={{ marginBottom: '0.5rem' }}>Question</h2>
+                            <div style={{
+                                background: 'var(--color-primary)',
+                                color: 'white',
+                                padding: '0.875rem 1.25rem',
+                                borderRadius: 'var(--radius-md)',
+                                fontSize: '0.95rem',
+                                marginBottom: '1.5rem',
+                                textAlign: 'left',
+                            }}>
+                                {state.poll.question}
                             </div>
                             <ResultsPanel
                                 results={state.results}
@@ -129,15 +111,25 @@ export const StudentView: React.FC = () => {
                             />
                         </div>
                     ) : state.hasVoted ? (
-                        /* Voted — waiting for results */
-                        <div className="card animate-scaleIn" style={{ padding: '2rem' }}>
-                            <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                                <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>✅</div>
-                                <h3 style={{ marginBottom: '0.25rem' }}>Answer Submitted!</h3>
-                                <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>Live results updating in real-time</p>
+                        /* Voted — waiting for results with live update */
+                        <div className="animate-scaleIn" style={{ textAlign: 'center' }}>
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <span className="intervue-badge">Intervue Poll</span>
+                            </div>
+                            <h2 style={{ marginBottom: '0.5rem' }}>Question</h2>
+                            <div style={{
+                                background: 'var(--color-primary)',
+                                color: 'white',
+                                padding: '0.875rem 1.25rem',
+                                borderRadius: 'var(--radius-md)',
+                                fontSize: '0.95rem',
+                                marginBottom: '1rem',
+                                textAlign: 'left',
+                            }}>
+                                {state.poll.question}
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
-                                <Timer seconds={seconds} progress={progress} isExpired={isExpired} size={90} />
+                                <Timer seconds={seconds} progress={progress} isExpired={isExpired} size={60} />
                             </div>
                             <ResultsPanel
                                 results={state.results}
@@ -148,20 +140,32 @@ export const StudentView: React.FC = () => {
                         </div>
                     ) : (
                         /* Active poll — vote! */
-                        <div className="card animate-scaleIn" style={{ padding: '2rem' }}>
-                            {/* Question header */}
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.75rem', gap: '1rem' }}>
-                                <div style={{ flex: 1 }}>
-                                    <span className="badge badge-primary" style={{ marginBottom: '0.75rem' }}>Live Question</span>
-                                    <h3 style={{ lineHeight: 1.4 }}>{state.poll.question}</h3>
-                                </div>
-                                <Timer seconds={seconds} progress={progress} isExpired={isExpired} size={88} />
+                        <div className="animate-scaleIn" style={{ textAlign: 'center' }}>
+                            <div style={{ marginBottom: '1.5rem' }}>
+                                <span className="intervue-badge">Intervue Poll</span>
+                            </div>
+                            <h2 style={{ marginBottom: '0.5rem' }}>Question</h2>
+
+                            {/* Question bar */}
+                            <div style={{
+                                background: 'var(--color-primary)',
+                                color: 'white',
+                                padding: '0.875rem 1.25rem',
+                                borderRadius: 'var(--radius-md)',
+                                fontSize: '0.95rem',
+                                marginBottom: '1.5rem',
+                                textAlign: 'left',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}>
+                                <span>{state.poll.question}</span>
+                                <Timer seconds={seconds} progress={progress} isExpired={isExpired} size={36} />
                             </div>
 
-                            {/* Options */}
+                            {/* Options as horizontal bars */}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
                                 {state.poll.options.map((opt, i) => {
-                                    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
                                     const isSelected = selectedOption === opt.id;
                                     return (
                                         <button
@@ -169,42 +173,35 @@ export const StudentView: React.FC = () => {
                                             id={`option-btn-${i}`}
                                             onClick={() => setSelectedOption(opt.id)}
                                             style={{
-                                                display: 'flex', alignItems: 'center', gap: '1rem',
-                                                padding: '1rem 1.25rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.75rem',
+                                                padding: '0.875rem 1.25rem',
                                                 border: `2px solid ${isSelected ? 'var(--color-primary)' : 'var(--color-border)'}`,
                                                 borderRadius: 'var(--radius-md)',
-                                                background: isSelected ? 'rgba(99,102,241,0.12)' : 'var(--color-surface-2)',
+                                                background: isSelected ? 'rgba(108, 99, 255, 0.08)' : 'var(--color-surface)',
                                                 cursor: 'pointer',
                                                 textAlign: 'left',
                                                 transition: 'all 0.2s ease',
                                                 color: 'var(--color-text)',
                                                 fontFamily: 'var(--font-family)',
                                                 fontWeight: isSelected ? 600 : 400,
-                                                transform: isSelected ? 'scale(1.01)' : 'scale(1)',
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                if (!isSelected) {
-                                                    e.currentTarget.style.borderColor = 'rgba(99,102,241,0.4)';
-                                                    e.currentTarget.style.background = 'var(--color-surface-3)';
-                                                }
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                if (!isSelected) {
-                                                    e.currentTarget.style.borderColor = 'var(--color-border)';
-                                                    e.currentTarget.style.background = 'var(--color-surface-2)';
-                                                }
+                                                width: '100%',
+                                                fontSize: '0.95rem',
                                             }}
                                         >
-                                            <span style={{
-                                                width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-                                                background: isSelected ? 'var(--gradient-primary)' : 'var(--color-surface-3)',
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                fontSize: '0.8rem', fontWeight: 700, color: isSelected ? 'white' : 'var(--color-text-muted)',
-                                            }}>
-                                                {letters[i]}
+                                            <span className="option-number"
+                                                style={{
+                                                    background: isSelected ? 'var(--color-primary)' : 'var(--color-primary)',
+                                                    opacity: isSelected ? 1 : 0.7,
+                                                }}
+                                            >
+                                                {i + 1}
                                             </span>
-                                            <span style={{ fontSize: '0.95rem' }}>{opt.text}</span>
-                                            {isSelected && <span style={{ marginLeft: 'auto', color: 'var(--color-primary-light)', fontSize: '1.1rem' }}>✓</span>}
+                                            <span>{opt.text}</span>
+                                            {isSelected && (
+                                                <span style={{ marginLeft: 'auto', color: 'var(--color-primary)', fontSize: '1.1rem' }}>✓</span>
+                                            )}
                                         </button>
                                     );
                                 })}
@@ -212,11 +209,12 @@ export const StudentView: React.FC = () => {
 
                             <button
                                 id="submit-vote-btn"
-                                className="btn btn-primary btn-lg w-full"
+                                className="btn btn-primary btn-lg"
                                 onClick={handleVote}
                                 disabled={!selectedOption || isExpired}
+                                style={{ minWidth: 180 }}
                             >
-                                {isExpired ? 'Time Expired' : selectedOption ? 'Submit Answer →' : 'Select an option'}
+                                {isExpired ? 'Time Expired' : selectedOption ? 'Submit Answer' : 'Select an option'}
                             </button>
                         </div>
                     )}
@@ -228,34 +226,26 @@ export const StudentView: React.FC = () => {
     );
 };
 
+/* Waiting screen — matches Figma "Wait for the teacher to ask questions.." */
 const WaitingForPoll: React.FC = () => (
-    <div className="card animate-fadeIn" style={{ padding: '3rem 2rem', textAlign: 'center' }}>
-        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⏳</div>
-        <h3 style={{ marginBottom: '0.5rem' }}>Waiting for the teacher…</h3>
-        <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
-            You'll see the poll question here as soon as the teacher starts one
-        </p>
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
-            <div style={{ display: 'flex', gap: '0.4rem' }}>
-                {[0, 1, 2].map((i) => (
-                    <div key={i} style={{
-                        width: 8, height: 8, borderRadius: '50%',
-                        background: 'var(--color-primary)',
-                        animation: `pulse 1.4s ease-in-out ${i * 0.15}s infinite`,
-                    }} />
-                ))}
-            </div>
+    <div className="animate-fadeIn" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
+        <div style={{ marginBottom: '1.5rem' }}>
+            <span className="intervue-badge">Intervue Poll</span>
         </div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+            <div className="spinner" />
+        </div>
+        <h2 style={{ fontWeight: 400 }}>Wait for the teacher to ask questions..</h2>
     </div>
 );
 
 const StudentSkeleton: React.FC = () => (
-    <div className="card" style={{ padding: '2rem' }}>
-        <div className="skeleton" style={{ height: 24, width: '40%', marginBottom: '1.25rem' }} />
-        <div className="skeleton" style={{ height: 20, width: '90%', marginBottom: '0.5rem' }} />
-        <div className="skeleton" style={{ height: 20, width: '70%', marginBottom: '2rem' }} />
-        {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="skeleton" style={{ height: 60, marginBottom: '0.75rem', borderRadius: 'var(--radius-md)' }} />
-        ))}
+    <div style={{ padding: '2rem', textAlign: 'center' }}>
+        <div className="skeleton" style={{ height: 32, width: 120, margin: '0 auto 1.5rem', borderRadius: 'var(--radius-full)' }} />
+        <div className="skeleton" style={{ height: 40, width: '60%', margin: '0 auto 1rem' }} />
+        <div className="skeleton" style={{ height: 44, width: '100%', marginBottom: '0.75rem', borderRadius: 'var(--radius-md)' }} />
+        <div className="skeleton" style={{ height: 44, width: '100%', marginBottom: '0.75rem', borderRadius: 'var(--radius-md)' }} />
+        <div className="skeleton" style={{ height: 44, width: '100%', marginBottom: '0.75rem', borderRadius: 'var(--radius-md)' }} />
+        <div className="skeleton" style={{ height: 44, width: '100%', borderRadius: 'var(--radius-md)' }} />
     </div>
 );
