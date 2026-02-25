@@ -15,6 +15,7 @@ export const registerPollSocketHandlers = (io: SocketServer) => {
             connectedTeachers.add(socket.id);
             socket.join('teachers');
             emitStudentCount(io);
+            emitStudentList(io);
             console.log(`[Socket] Teacher registered: ${socket.id}`);
         });
 
@@ -22,6 +23,7 @@ export const registerPollSocketHandlers = (io: SocketServer) => {
             connectedStudents.set(socket.id, studentName);
             socket.join('students');
             emitStudentCount(io);
+            emitStudentList(io);
             console.log(`[Socket] Student registered: ${studentName} (${socket.id})`);
 
             // Send current active poll state for state recovery
@@ -110,11 +112,31 @@ export const registerPollSocketHandlers = (io: SocketServer) => {
             }
         });
 
+        // ─── Kick student (teacher) ──────────────────────────
+        socket.on('student:kick', ({ studentName }: { studentName: string }) => {
+            console.log(`[Socket] Teacher kicking student: ${studentName}`);
+            // Find the student's socket by name
+            for (const [socketId, name] of connectedStudents.entries()) {
+                if (name === studentName) {
+                    const studentSocket = io.sockets.sockets.get(socketId);
+                    if (studentSocket) {
+                        studentSocket.emit('student:kicked', { studentName });
+                        studentSocket.disconnect(true);
+                    }
+                    connectedStudents.delete(socketId);
+                    break;
+                }
+            }
+            emitStudentCount(io);
+            emitStudentList(io);
+        });
+
         // ─── Disconnect ──────────────────────────────────────
         socket.on('disconnect', () => {
             connectedStudents.delete(socket.id);
             connectedTeachers.delete(socket.id);
             emitStudentCount(io);
+            emitStudentList(io);
             console.log(`[Socket] Client disconnected: ${socket.id}`);
         });
     });
@@ -122,4 +144,12 @@ export const registerPollSocketHandlers = (io: SocketServer) => {
 
 function emitStudentCount(io: SocketServer) {
     io.emit('students:count', { count: connectedStudents.size });
+}
+
+function emitStudentList(io: SocketServer) {
+    const list = Array.from(connectedStudents.entries()).map(([socketId, name]) => ({
+        socketId,
+        name,
+    }));
+    io.emit('students:list', list);
 }

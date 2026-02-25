@@ -1,14 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChatMessage } from '../types';
 
+interface Participant {
+    socketId: string;
+    name: string;
+}
+
 interface ChatPopupProps {
     messages: ChatMessage[];
     onSend: (message: string) => void;
     name: string;
     role: 'teacher' | 'student';
+    participants?: Participant[];
+    onKick?: (studentName: string) => void;
 }
 
-export const ChatPopup: React.FC<ChatPopupProps> = ({ messages, onSend, name, role }) => {
+export const ChatPopup: React.FC<ChatPopupProps> = ({ messages, onSend, name, role, participants = [], onKick }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<'chat' | 'participants'>('chat');
     const [input, setInput] = useState('');
@@ -184,10 +191,66 @@ export const ChatPopup: React.FC<ChatPopupProps> = ({ messages, onSend, name, ro
                         </>
                     ) : (
                         /* Participants tab */
-                        <div style={{ flex: 1, overflowY: 'auto', padding: '1rem' }}>
-                            <div style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.85rem', paddingTop: '2rem' }}>
-                                Participant list coming soon
+                        <div style={{ flex: 1, overflowY: 'auto', padding: '0' }}>
+                            {/* Header row */}
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '0.75rem 1rem',
+                                borderBottom: '1px solid var(--color-border)',
+                                fontWeight: 700,
+                                fontSize: '0.85rem',
+                                color: 'var(--color-text-muted)',
+                            }}>
+                                <span>Name</span>
+                                {role === 'teacher' && <span>Action</span>}
                             </div>
+
+                            {participants.length === 0 ? (
+                                <div style={{ textAlign: 'center', color: 'var(--color-text-muted)', fontSize: '0.85rem', paddingTop: '2rem' }}>
+                                    No participants yet
+                                </div>
+                            ) : (
+                                participants.map((p) => (
+                                    <div
+                                        key={p.socketId}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            padding: '0.6rem 1rem',
+                                            borderBottom: '1px solid var(--color-surface-2)',
+                                            transition: 'background 0.15s ease',
+                                        }}
+                                        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-surface-2)')}
+                                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                                    >
+                                        <span style={{ fontSize: '0.9rem', color: 'var(--color-text)' }}>{p.name}</span>
+                                        {role === 'teacher' && onKick && (
+                                            <button
+                                                onClick={() => onKick(p.name)}
+                                                style={{
+                                                    padding: '0.3rem 0.7rem',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: 600,
+                                                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                                                    borderRadius: 'var(--radius-sm)',
+                                                    background: 'rgba(239, 68, 68, 0.1)',
+                                                    color: 'var(--color-error)',
+                                                    cursor: 'pointer',
+                                                    fontFamily: 'var(--font-family)',
+                                                    transition: 'background 0.15s ease',
+                                                }}
+                                                onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(239, 68, 68, 0.2)')}
+                                                onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)')}
+                                            >
+                                                Kick
+                                            </button>
+                                        )}
+                                    </div>
+                                ))
+                            )}
                         </div>
                     )}
                 </div>

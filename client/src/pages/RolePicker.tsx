@@ -102,11 +102,12 @@ export const RolePicker: React.FC = () => {
                 </p>
 
                 {/* Role Cards */}
-                <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginBottom: '2rem', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginBottom: '2rem', flexWrap: 'nowrap' }}>
                     <button
                         id="student-role-btn"
                         className={`role-card${selectedRole === 'student' ? ' selected' : ''}`}
                         onClick={() => setSelectedRole('student')}
+                        style={{ flex: 1, minWidth: 0 }}
                     >
                         <h4>I'm a Student</h4>
                         <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
@@ -116,6 +117,7 @@ export const RolePicker: React.FC = () => {
                         id="teacher-role-btn"
                         className={`role-card${selectedRole === 'teacher' ? ' selected' : ''}`}
                         onClick={() => setSelectedRole('teacher')}
+                        style={{ flex: 1, minWidth: 0 }}
                     >
                         <h4>I'm a Teacher</h4>
                         <p>Submit answers and view live poll results in real-time.</p>

@@ -20,6 +20,7 @@ export const TeacherDashboard: React.FC = () => {
     });
 
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [participants, setParticipants] = useState<{ socketId: string; name: string }[]>([]);
 
     // Poll creation form state
     const [question, setQuestion] = useState('');
@@ -47,9 +48,12 @@ export const TeacherDashboard: React.FC = () => {
         const unsubChat = on('chat:message', (data: unknown) => {
             setChatMessages((prev) => [...prev, data as ChatMessage]);
         });
+        const unsubList = on('students:list', (data: unknown) => {
+            setParticipants(data as { socketId: string; name: string }[]);
+        });
 
         return () => {
-            unsubNew?.(); unsubResults?.(); unsubEnded?.(); unsubCount?.(); unsubChat?.();
+            unsubNew?.(); unsubResults?.(); unsubEnded?.(); unsubCount?.(); unsubChat?.(); unsubList?.();
         };
     }, [on, handlers, setStudentCount]);
 
@@ -108,6 +112,11 @@ export const TeacherDashboard: React.FC = () => {
 
     const sendChatMessage = (msg: string) => {
         emit('chat:message', { name: 'Teacher', message: msg, role: 'teacher' });
+    };
+
+    const kickStudent = (studentName: string) => {
+        emit('student:kick', { studentName });
+        showToast(`Kicked ${studentName}`, 'info');
     };
 
     if (!history.length && !historyLoading) {
@@ -303,7 +312,7 @@ export const TeacherDashboard: React.FC = () => {
                 </div>
             </div>
 
-            <ChatPopup messages={chatMessages} onSend={sendChatMessage} name="Teacher" role="teacher" />
+            <ChatPopup messages={chatMessages} onSend={sendChatMessage} name="Teacher" role="teacher" participants={participants} onKick={kickStudent} />
         </>
     );
 };

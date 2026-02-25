@@ -23,6 +23,7 @@ export const StudentView: React.FC = () => {
 
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
+    const [isKicked, setIsKicked] = useState(false);
 
     // Timer sync with server
     const startTime = state.poll ? new Date(state.poll.startTime).getTime() : null;
@@ -58,9 +59,12 @@ export const StudentView: React.FC = () => {
         const unsubChat = on('chat:message', (data: unknown) => {
             setChatMessages((prev) => [...prev, data as ChatMessage]);
         });
+        const unsubKicked = on('student:kicked', () => {
+            setIsKicked(true);
+        });
 
         return () => {
-            unsubNew?.(); unsubState?.(); unsubResults?.(); unsubEnded?.(); unsubRemoved?.(); unsubChat?.();
+            unsubNew?.(); unsubState?.(); unsubResults?.(); unsubEnded?.(); unsubRemoved?.(); unsubChat?.(); unsubKicked?.();
         };
     }, [on, handlers]);
 
@@ -72,6 +76,26 @@ export const StudentView: React.FC = () => {
     const sendChat = (msg: string) => {
         emit('chat:message', { name: studentName, message: msg, role: 'student' });
     };
+
+    // Show kicked-out screen
+    if (isKicked) {
+        return (
+            <div className="page-center">
+                <div style={{ textAlign: 'center', maxWidth: 480 }} className="animate-fadeIn">
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <span className="intervue-badge">Intervue Poll</span>
+                    </div>
+                    <h1 style={{ fontWeight: 700, fontSize: '2rem', marginBottom: '0.75rem' }}>
+                        You've been Kicked out !
+                    </h1>
+                    <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', lineHeight: 1.6 }}>
+                        Looks like the teacher had removed you from the poll system. Please
+                        Try again sometime.
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <>
