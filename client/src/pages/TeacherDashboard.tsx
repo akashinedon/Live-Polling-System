@@ -21,8 +21,6 @@ export const TeacherDashboard: React.FC = () => {
 
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const [participants, setParticipants] = useState<{ socketId: string; name: string }[]>([]);
-
-    // Poll creation form state
     const [question, setQuestion] = useState('');
     const [options, setOptions] = useState([
         { text: '', isCorrect: false },
@@ -31,7 +29,6 @@ export const TeacherDashboard: React.FC = () => {
     const [duration, setDuration] = useState(60);
     const [isCreating, setIsCreating] = useState(false);
 
-    // Register as teacher and bind socket events
     useEffect(() => {
         if (!isConnected) return;
         emit('register:teacher');
@@ -93,21 +90,21 @@ export const TeacherDashboard: React.FC = () => {
         setOptions([...options, { text: '', isCorrect: false }]);
     };
 
-    const updateOptionText = (i: number, text: string) => {
-        const o = [...options];
-        o[i] = { ...o[i], text };
-        setOptions(o);
+    const updateOptionText = (index: number, text: string) => {
+        const updated = [...options];
+        updated[index] = { ...updated[index], text };
+        setOptions(updated);
     };
 
-    const toggleCorrect = (i: number, value: boolean) => {
-        const o = [...options];
-        o[i] = { ...o[i], isCorrect: value };
-        setOptions(o);
+    const toggleCorrect = (index: number, value: boolean) => {
+        const updated = [...options];
+        updated[index] = { ...updated[index], isCorrect: value };
+        setOptions(updated);
     };
 
-    const removeOption = (i: number) => {
+    const removeOption = (index: number) => {
         if (options.length <= 2) return;
-        setOptions(options.filter((_, idx) => idx !== i));
+        setOptions(options.filter((_, idx) => idx !== index));
     };
 
     const sendChatMessage = (msg: string) => {
@@ -119,9 +116,10 @@ export const TeacherDashboard: React.FC = () => {
         showToast(`Kicked ${studentName}`, 'info');
     };
 
-    if (!history.length && !historyLoading) {
-        // prefetch silently
-    }
+    const resetPollForm = () => {
+        setQuestion('');
+        setOptions([{ text: '', isCorrect: false }, { text: '', isCorrect: false }]);
+    };
 
     return (
         <>
@@ -130,7 +128,6 @@ export const TeacherDashboard: React.FC = () => {
 
             <div style={{ minHeight: '100vh', padding: '2.5rem 2rem' }}>
                 <div style={{ maxWidth: 720, margin: '0 auto' }}>
-                    {/* Header */}
                     <div style={{ marginBottom: '1.5rem' }}>
                         <span className="intervue-badge">Intervue Poll</span>
                     </div>
@@ -141,7 +138,7 @@ export const TeacherDashboard: React.FC = () => {
                                 Let's <strong>Get Started</strong>
                             </h1>
                             <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', maxWidth: 480 }}>
-                                you'll have the ability to create and manage polls, ask questions, and monitor your students' responses in real-time.
+                                You'll have the ability to create and manage polls, ask questions, and monitor your students' responses in real-time.
                             </p>
                         </div>
                         <button
@@ -154,7 +151,6 @@ export const TeacherDashboard: React.FC = () => {
                         </button>
                     </div>
 
-                    {/* Active Poll Results */}
                     {state.poll && (
                         <div style={{ marginBottom: '2rem' }} className="animate-fadeIn">
                             <ResultsPanel
@@ -167,23 +163,14 @@ export const TeacherDashboard: React.FC = () => {
                                     <button className="btn btn-danger" id="end-poll-btn" onClick={endPoll}>
                                         End Poll Now
                                     </button>
-                                    <button className="btn btn-primary" onClick={() => {
-                                        endPoll();
-                                        setTimeout(() => {
-                                            setQuestion('');
-                                            setOptions([{ text: '', isCorrect: false }, { text: '', isCorrect: false }]);
-                                        }, 500);
-                                    }}>
+                                    <button className="btn btn-primary" onClick={() => { endPoll(); setTimeout(resetPollForm, 500); }}>
                                         + Ask a new question
                                     </button>
                                 </div>
                             )}
                             {!state.poll.isActive && (
                                 <div style={{ marginTop: '1rem', textAlign: 'center' }}>
-                                    <button className="btn btn-primary btn-lg" onClick={() => {
-                                        setQuestion('');
-                                        setOptions([{ text: '', isCorrect: false }, { text: '', isCorrect: false }]);
-                                    }}>
+                                    <button className="btn btn-primary btn-lg" onClick={resetPollForm}>
                                         + Ask a new question
                                     </button>
                                 </div>
@@ -191,10 +178,8 @@ export const TeacherDashboard: React.FC = () => {
                         </div>
                     )}
 
-                    {/* Poll Creation Form */}
                     {!state.poll?.isActive && (
                         <div className="animate-fadeIn">
-                            {/* Question Input */}
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                                 <label style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-text)' }}>
                                     Enter your question
@@ -228,7 +213,6 @@ export const TeacherDashboard: React.FC = () => {
                                 <div className="char-counter">{question.length}/100</div>
                             </div>
 
-                            {/* Options */}
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                                 <label style={{ fontWeight: 700, fontSize: '1rem', color: 'var(--color-text)' }}>
                                     Edit Options
@@ -290,7 +274,6 @@ export const TeacherDashboard: React.FC = () => {
                                 + Add More option
                             </button>
 
-                            {/* Ask Question button */}
                             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                 <button
                                     id="create-poll-btn"

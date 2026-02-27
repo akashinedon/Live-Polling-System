@@ -24,17 +24,14 @@ export const RolePicker: React.FC = () => {
         setRole('student');
     };
 
-    /* Student name entry screen */
     if (view === 'student-name') {
         return (
             <div className="page-center">
                 <div style={{ width: '100%', maxWidth: 520, textAlign: 'center' }} className="animate-fadeIn">
-                    {/* Intervue Badge */}
                     <div style={{ marginBottom: '1.5rem' }}>
                         <span className="intervue-badge">Intervue Poll</span>
                     </div>
 
-                    {/* Heading */}
                     <h1 style={{ marginBottom: '0.5rem' }}>
                         Let's <strong>Get Started</strong>
                     </h1>
@@ -42,7 +39,6 @@ export const RolePicker: React.FC = () => {
                         If you're a student, you'll be able to <strong style={{ color: 'var(--color-text)' }}>submit your answers</strong>, participate in live polls, and see how your responses compare with your classmates
                     </p>
 
-                    {/* Name input */}
                     <div style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
                         <label style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-text)', display: 'block', marginBottom: '0.5rem' }}>
                             Enter your Name
@@ -51,7 +47,7 @@ export const RolePicker: React.FC = () => {
                             id="student-name-input"
                             className="input"
                             type="text"
-                            placeholder="Rahul Bajaj"
+                            placeholder="Aakash Chauhan"
                             value={nameInput}
                             autoFocus
                             onChange={(e) => { setNameInput(e.target.value); setError(''); }}
@@ -60,7 +56,6 @@ export const RolePicker: React.FC = () => {
                         {error && <p style={{ color: 'var(--color-error)', fontSize: '0.8rem', marginTop: '0.5rem' }}>{error}</p>}
                     </div>
 
-                    {/* Continue button */}
                     <button
                         id="student-join-btn"
                         className="btn btn-primary btn-lg"
@@ -84,16 +79,13 @@ export const RolePicker: React.FC = () => {
         );
     }
 
-    /* Role selection screen */
     return (
         <div className="page-center">
             <div style={{ width: '100%', maxWidth: 620, textAlign: 'center' }} className="animate-fadeIn">
-                {/* Intervue Badge */}
                 <div style={{ marginBottom: '1.5rem' }}>
                     <span className="intervue-badge">Intervue Poll</span>
                 </div>
 
-                {/* Heading */}
                 <h1 style={{ marginBottom: '0.5rem' }}>
                     Welcome to the <strong>Live Polling System</strong>
                 </h1>
@@ -101,7 +93,6 @@ export const RolePicker: React.FC = () => {
                     Please select the role that best describes you to begin using the live polling system
                 </p>
 
-                {/* Role Cards */}
                 <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginBottom: '2rem', flexWrap: 'nowrap' }}>
                     <button
                         id="student-role-btn"
@@ -110,7 +101,7 @@ export const RolePicker: React.FC = () => {
                         style={{ flex: 1, minWidth: 0 }}
                     >
                         <h4>I'm a Student</h4>
-                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
+                        <p>Submit your answers and see how they compare with your classmates in real-time.</p>
                     </button>
 
                     <button
@@ -120,11 +111,10 @@ export const RolePicker: React.FC = () => {
                         style={{ flex: 1, minWidth: 0 }}
                     >
                         <h4>I'm a Teacher</h4>
-                        <p>Submit answers and view live poll results in real-time.</p>
+                        <p>Create polls, ask questions, and monitor student responses live.</p>
                     </button>
                 </div>
 
-                {/* Continue button */}
                 <button
                     id="continue-btn"
                     className="btn btn-primary btn-lg"

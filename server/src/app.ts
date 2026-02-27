@@ -8,7 +8,6 @@ dotenv.config();
 
 const app = express();
 
-// ─── Middleware ──────────────────────────────────────────
 const allowedOrigins = [
     process.env.CLIENT_URL || 'http://localhost:5173',
     'http://localhost:5173',
@@ -19,8 +18,6 @@ const allowedOrigins = [
 app.use(
     cors({
         origin: (origin, callback) => {
-            // Allow requests with no origin (mobile apps, curl, etc)
-            // Allow all vercel.app preview deployments
             if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
                 callback(null, true);
             } else {
@@ -34,15 +31,12 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ─── Health Check ────────────────────────────────────────
 app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// ─── API Routes ──────────────────────────────────────────
 app.use('/api/polls', pollRoutes);
 
-// ─── 404 & Error Handling ────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
 

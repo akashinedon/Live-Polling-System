@@ -34,23 +34,22 @@ export const usePoll = ({ role, studentName, onEvent }: UsePollOptions) => {
     });
     const [history, setHistory] = useState<PollHistoryItem[]>([]);
     const [historyLoading, setHistoryLoading] = useState(false);
-    const votingRef = useRef(false);
+    const isVotingInProgress = useRef(false);
 
-    // ─── State Recovery: fetch active poll on mount ──────
     useEffect(() => {
         const fetchActivePoll = async () => {
             try {
                 const params = studentName ? `?studentName=${encodeURIComponent(studentName)}` : '';
                 const res = await axios.get(`${API_BASE}/polls/active${params}`);
                 if (res.data.success && res.data.data) {
-                    const d = res.data.data;
+                    const data = res.data.data;
                     setState((prev) => ({
                         ...prev,
-                        poll: d,
-                        remainingTime: d.remainingTime,
-                        results: d.results || [],
-                        totalVotes: d.totalVotes || 0,
-                        hasVoted: d.hasVoted || false,
+                        poll: data,
+                        remainingTime: data.remainingTime,
+                        results: data.results || [],
+                        totalVotes: data.totalVotes || 0,
+                        hasVoted: data.hasVoted || false,
                         isLoading: false,
                     }));
                 } else {
@@ -64,7 +63,6 @@ export const usePoll = ({ role, studentName, onEvent }: UsePollOptions) => {
         fetchActivePoll();
     }, [studentName, role]);
 
-    // ─── Socket event handlers ───────────────────────────
     const handlePollNew = useCallback((data: { poll: Poll; remainingTime: number }) => {
         setState({
             poll: data.poll,
@@ -121,13 +119,11 @@ export const usePoll = ({ role, studentName, onEvent }: UsePollOptions) => {
         }
     }, [studentName, showToast]);
 
-    // ─── Vote submission with optimistic UI ──────────────
     const submitVote = useCallback(async (optionId: string, emitFn: (event: string, data: unknown, cb?: (res: unknown) => void) => void) => {
-        if (!state.poll || state.hasVoted || votingRef.current) return;
+        if (!state.poll || state.hasVoted || isVotingInProgress.current) return;
 
-        // Optimistic UI update
-        votingRef.current = true;
-        const prevState = state;
+        isVotingInProgress.current = true;
+        const previousState = state;
         setState((prev) => ({
             ...prev,
             hasVoted: true,
@@ -135,17 +131,15 @@ export const usePoll = ({ role, studentName, onEvent }: UsePollOptions) => {
         }));
 
         emitFn('poll:vote', { pollId: state.poll._id, studentName, optionId }, (res: unknown) => {
-            votingRef.current = false;
+            isVotingInProgress.current = false;
             const response = res as { success: boolean; message?: string; results?: VoteResult[] };
             if (!response.success) {
-                // Rollback optimistic update
-                setState(prevState);
+                setState(previousState);
                 showToast(response.message || 'Failed to submit vote', 'error');
             }
         });
     }, [state, studentName, showToast]);
 
-    // ─── Poll History ────────────────────────────────────
     const fetchHistory = useCallback(async (page = 1) => {
         setHistoryLoading(true);
         try {

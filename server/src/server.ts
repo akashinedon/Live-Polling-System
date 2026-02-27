@@ -1,4 +1,3 @@
-// Live Polling System — Server Entry Point v2
 import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 import mongoose from 'mongoose';
@@ -13,7 +12,6 @@ const PORT = process.env.PORT || 5000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/live-polling';
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 
-// Allowed origins for CORS (both REST and WebSocket)
 const allowedOrigins = [
     CLIENT_URL,
     'http://localhost:5173',
@@ -21,7 +19,6 @@ const allowedOrigins = [
     'https://live-polling-system-lac-alpha.vercel.app',
 ].filter(Boolean);
 
-// ─── HTTP + Socket.io Server ─────────────────────────────
 const httpServer = createServer(app);
 const io = new SocketServer(httpServer, {
     cors: {
@@ -33,45 +30,37 @@ const io = new SocketServer(httpServer, {
     pingInterval: 25000,
 });
 
-// Inject io into service for broadcasting
 setIo(io);
-
-// Register socket handlers
 registerPollSocketHandlers(io);
 
-// ─── MongoDB Connection ──────────────────────────────────
 const connectDB = async () => {
     try {
         await mongoose.connect(MONGODB_URI);
-        console.log('[DB] MongoDB connected successfully');
+        console.log('MongoDB connected');
 
-        // Recover timers for any active polls on restart
         await pollService.recoverActiveTimers();
-        console.log('[Server] Timer recovery complete');
+        console.log('Timer recovery complete');
     } catch (err) {
-        console.error('[DB] MongoDB connection failed:', err);
-        console.warn('[Server] Running without database — some features unavailable');
-        // Don't crash — allow server to run with degraded functionality
+        console.error('MongoDB connection failed:', err);
+        console.warn('Running without database — some features unavailable');
     }
 };
 
-// ─── Start Server ────────────────────────────────────────
 const startServer = async () => {
     await connectDB();
 
     httpServer.listen(Number(PORT), '0.0.0.0', () => {
-        console.log(`[Server] Running on http://localhost:${PORT}`);
-        console.log(`[Server] Environment: ${process.env.NODE_ENV || 'development'}`);
+        console.log(`Server running on port ${PORT}`);
+        console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
     });
 };
 
-// Handle unhandled rejections
 process.on('unhandledRejection', (err: Error) => {
-    console.error('[Server] Unhandled rejection:', err.message);
+    console.error('Unhandled rejection:', err.message);
 });
 
 process.on('uncaughtException', (err: Error) => {
-    console.error('[Server] Uncaught exception:', err.message);
+    console.error('Uncaught exception:', err.message);
     process.exit(1);
 });
 

@@ -25,7 +25,6 @@ export const StudentView: React.FC = () => {
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const [isKicked, setIsKicked] = useState(false);
 
-    // Timer sync with server
     const startTime = state.poll ? new Date(state.poll.startTime).getTime() : null;
     const duration = state.poll?.duration ?? null;
 
@@ -43,13 +42,11 @@ export const StudentView: React.FC = () => {
         }, [state.poll, showToast, setState]),
     });
 
-    // Register as student
     useEffect(() => {
         if (!isConnected) return;
         emit('register:student', { studentName });
     }, [isConnected, emit, studentName]);
 
-    // Bind socket events
     useEffect(() => {
         const unsubNew = on('poll:new', handlers.handlePollNew as (...args: unknown[]) => void);
         const unsubState = on('poll:state', handlers.handlePollState as (...args: unknown[]) => void);
@@ -77,7 +74,6 @@ export const StudentView: React.FC = () => {
         emit('chat:message', { name: studentName, message: msg, role: 'student' });
     };
 
-    // Show kicked-out screen
     if (isKicked) {
         return (
             <div className="page-center">
@@ -86,11 +82,10 @@ export const StudentView: React.FC = () => {
                         <span className="intervue-badge">Intervue Poll</span>
                     </div>
                     <h1 style={{ fontWeight: 700, fontSize: '2rem', marginBottom: '0.75rem' }}>
-                        You've been Kicked out !
+                        You've been Kicked out!
                     </h1>
                     <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem', lineHeight: 1.6 }}>
-                        Looks like the teacher had removed you from the poll system. Please
-                        Try again sometime.
+                        The teacher has removed you from the poll session. Please try again later.
                     </p>
                 </div>
             </div>
@@ -104,13 +99,11 @@ export const StudentView: React.FC = () => {
 
             <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem' }}>
                 <div style={{ width: '100%', maxWidth: 700 }}>
-                    {/* Main content area */}
                     {state.isLoading ? (
                         <StudentSkeleton />
                     ) : !state.poll ? (
                         <WaitingForPoll />
                     ) : !state.poll.isActive || isExpired ? (
-                        /* Results view */
                         <div className="animate-scaleIn" style={{ textAlign: 'center' }}>
                             <div style={{ marginBottom: '1.5rem' }}>
                                 <span className="intervue-badge">Intervue Poll</span>
@@ -135,7 +128,6 @@ export const StudentView: React.FC = () => {
                             />
                         </div>
                     ) : state.hasVoted ? (
-                        /* Voted — waiting for results with live update */
                         <div className="animate-scaleIn" style={{ textAlign: 'center' }}>
                             <div style={{ marginBottom: '1.5rem' }}>
                                 <span className="intervue-badge">Intervue Poll</span>
@@ -163,14 +155,12 @@ export const StudentView: React.FC = () => {
                             />
                         </div>
                     ) : (
-                        /* Active poll — vote! */
                         <div className="animate-scaleIn" style={{ textAlign: 'center' }}>
                             <div style={{ marginBottom: '1.5rem' }}>
                                 <span className="intervue-badge">Intervue Poll</span>
                             </div>
                             <h2 style={{ marginBottom: '0.5rem' }}>Question</h2>
 
-                            {/* Question bar */}
                             <div style={{
                                 background: 'var(--color-primary)',
                                 color: 'white',
@@ -187,7 +177,6 @@ export const StudentView: React.FC = () => {
                                 <Timer seconds={seconds} progress={progress} isExpired={isExpired} size={36} />
                             </div>
 
-                            {/* Options as horizontal bars */}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
                                 {state.poll.options.map((opt, i) => {
                                     const isSelected = selectedOption === opt.id;
@@ -216,7 +205,7 @@ export const StudentView: React.FC = () => {
                                         >
                                             <span className="option-number"
                                                 style={{
-                                                    background: isSelected ? 'var(--color-primary)' : 'var(--color-primary)',
+                                                    background: 'var(--color-primary)',
                                                     opacity: isSelected ? 1 : 0.7,
                                                 }}
                                             >
@@ -250,7 +239,6 @@ export const StudentView: React.FC = () => {
     );
 };
 
-/* Waiting screen — matches Figma "Wait for the teacher to ask questions.." */
 const WaitingForPoll: React.FC = () => (
     <div className="animate-fadeIn" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
         <div style={{ marginBottom: '1.5rem' }}>
