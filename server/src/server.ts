@@ -17,6 +17,7 @@ const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:5173';
 const allowedOrigins = [
     CLIENT_URL,
     'http://localhost:5173',
+    'https://live-polling-system-meao.vercel.app',
     'https://live-polling-system-lac-alpha.vercel.app',
 ].filter(Boolean);
 

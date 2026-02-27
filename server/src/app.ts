@@ -12,6 +12,7 @@ const app = express();
 const allowedOrigins = [
     process.env.CLIENT_URL || 'http://localhost:5173',
     'http://localhost:5173',
+    'https://live-polling-system-meao.vercel.app',
     'https://live-polling-system-lac-alpha.vercel.app',
 ].filter(Boolean);
 
@@ -19,7 +20,8 @@ app.use(
     cors({
         origin: (origin, callback) => {
             // Allow requests with no origin (mobile apps, curl, etc)
-            if (!origin || allowedOrigins.includes(origin)) {
+            // Allow all vercel.app preview deployments
+            if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
                 callback(null, true);
             } else {
                 callback(new Error('Not allowed by CORS'));
