@@ -58,7 +58,7 @@ const connectDB = async () => {
 const startServer = async () => {
     await connectDB();
 
-    httpServer.listen(PORT, () => {
+    httpServer.listen(Number(PORT), '0.0.0.0', () => {
         console.log(`[Server] Running on http://localhost:${PORT}`);
         console.log(`[Server] Environment: ${process.env.NODE_ENV || 'development'}`);
     });
